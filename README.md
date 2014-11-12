@@ -4,6 +4,7 @@ Ajax Demo: A Todo List Application
 This application demonstrates Ajax functionality.
 
 To run:
+-------
 
 1. Download this project onto your computer.
 2. In the terminal, navigate to this project directory.
@@ -13,6 +14,7 @@ To run:
 6. Navigate your web browser to: localhost:3000
 
 Directions:
+-----------
 
 * Toggle the "View Ajax Calls" checkbox to show or hide a listing of all the Ajax calls the client side web page makes.
 * Create new todo items by entering the todo task in the input bar and hitting create.
