@@ -1,0 +1,70 @@
+body {
+	font-family: 'Droid Sans', sans-serif;
+	background-color: #def;
+}
+
+#main {
+	margin: 20px auto;
+	padding: 20px;
+	width: 600px;
+	border: 1px solid #aaa;
+	border-radius: 10px;
+	background-color: #fff;
+}
+
+h1 {
+
+}
+
+#newTodoItem {
+	
+}
+
+#newTodoInput {
+	width: 500px;
+	padding: 5px;
+}
+
+#newTodoCreate {
+	height: 35px;
+}
+
+#todoItems {	
+
+	margin: 20px;
+
+}
+
+.todoItem {
+	height: 60px;
+}
+
+.todoItem:hover .remove {
+	display: inline-block;
+}
+
+.checkbox, .label, .edit, .remove {
+	display: inline-block;
+}
+
+.label, .edit, .remove {
+	padding: 0 5px;
+	margin: auto 0;
+}
+
+.label {
+	font-size: 28px;
+}
+
+.label:hover {
+	background-color: #dde;
+}
+
+.remove {
+	font-size: 16px;
+	color: #888;
+	text-decoration: underline;
+	cursor: pointer;
+	display: none;
+	margin-left: 10px;
+}

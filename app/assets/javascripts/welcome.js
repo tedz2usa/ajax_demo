@@ -1,78 +1,300 @@
+var todoList, newTodoInput, newTodoCreate;
+
 window.onload = function() {
 
 	// Get new todo item input field and create button.
-	var newTodoInput  = document.getElementById("newTodoInput");
-	var newTodoCreate = document.getElementById("newTodoCreate");
+	newTodoInput  = document.getElementById("newTodoInput");
+	newTodoCreate = document.getElementById("newTodoCreate");
+
+	// Get the todo list div.
+	todoList = document.getElementById("todoItems");
 
 	// Set button click listener to create button.
 	newTodoCreate.onclick = createTodoItem;
 
+	// Update the todo list display.
 	updateTodoList();
 
-	function createTodoItem() {
+}
 
-		// Create a new XMLHttpRequest object.
-		var request = new XMLHttpRequest();
 
-		// Specify the HTTP method and url.
-		request.open("POST", "/todo_items");
 
-		// Asssign listener when done.
-		request.onreadystatechange = function() {
-			if (request.readyState === 4) {
-				updateTodoList();
-			}
+
+function createTodoItem() {
+
+	// Create a new XMLHttpRequest object.
+	var request = new XMLHttpRequest();
+
+	// Specify the HTTP method and url.
+	request.open("POST", "/todo_items");
+
+	// Asssign listener when done.
+	request.onreadystatechange = function() {
+		if (request.readyState === 4) {
+			updateTodoList();
 		}
-
-		// Make the data payload.
-		var payload = {
-			todo_item: {
-				label: newTodoInput.value,
-				completed: false
-			}
-		}
-
-
-		// Initiate the request, sending the payload.
-		request.setRequestHeader("Content-Type","application/json")
-		request.send(JSON.stringify(payload));
-
 	}
 
-	function updateTodoList() {
-
-		// Create a new XMLHttpRequest object.
-		var request = new XMLHttpRequest();
-
-		// Specify the HTTP method and url.
-		request.open("GET", "/todo_items.json");
-
-		// Asssign listener when done.
-		request.onreadystatechange = function() {
-			if (request.readyState === 4) {
-				var itemsList = document.getElementById("todoItems");
-				var todoItems = JSON.parse(request.responseText);
-				console.log(todoItems);
-				updateTodoListDOM(request.responseText);
-			}
+	// Make the data payload.
+	var payload = {
+		todo_item: {
+			label: newTodoInput.value,
+			completed: false
 		}
-
-		// Initiate the request, sending the payload.
-		request.setRequestHeader("Content-Type","application/json")
-		request.send();
-
 	}
 
-	function updateTodoListDOM(todoItems) {
+	// Initiate the request, sending the payload.
+	request.setRequestHeader("Content-Type","application/json")
+	request.send(JSON.stringify(payload));
 
-		var str = "";
+}
 
-		for (var i = 0; i < todoItems.length; i++) {
+function updateTodoList() {
 
+	// Create a new XMLHttpRequest object.
+	var request = new XMLHttpRequest();
 
+	// Specify the HTTP method and url.
+	request.open("GET", "/todo_items.json");
 
+	// Asssign listener when done.
+	request.onreadystatechange = function() {
+		if (request.readyState === 4) {
+			var todoItems = JSON.parse(request.responseText);
+			updateTodoListDOM(todoItems);
 		}
+	}
+
+	// Initiate the request, sending the payload.
+	request.send();
+
+}
+
+function updateTodoListDOM(todoItems) {
+
+	// Clear the todoList DOM element, and new todo input field.
+	todoList.innerHTML = "";
+	newTodoInput.value = "";
+
+	for (var i = 0; i < todoItems.length; i++) {
+
+		// Extract the item data.
+		var itemData = todoItems[i];
+
+		// Create a Todo Item DOM element to add to document.
+		var item = createTodoItemDOM(itemData);
+
+		// Add the item DOM element to the todoList.
+		todoList.appendChild(item);
 
 	}
 
 }
+
+function createTodoItemDOM(todoItemData) {
+
+	// Create the item DOM element.
+	var item = document.createElement("div");
+	item.className = "todoItem";
+	item.dataset.todoItemId   = todoItemData.id;
+	item.dataset.todoItemData = JSON.stringify(todoItemData);
+
+	// Create the todo item checkbox.
+	var checkbox = document.createElement("input");
+	checkbox.type    = "checkbox";
+	checkbox.checked = todoItemData.completed;
+
+	// Create the todo item label.
+	var label = document.createElement("p");
+	label.className = "label";
+	label.innerHTML = todoItemData.label;
+
+	// Create the remove button.
+	var remove = document.createElement("span");
+	remove.className = "remove";
+	remove.innerHTML = "(remove)";
+
+	// Add event listeners to checkbox, label, and remove.
+	checkbox.onclick = checkboxClickListener;
+	label.onclick    = labelClickListener;
+	remove.onclick   = removeClickListener;
+	
+	// Add the checkbox and label to the item DOM element.
+	item.appendChild(checkbox);
+	item.appendChild(label);
+	item.appendChild(remove);
+
+	return item;
+
+}
+
+function checkboxClickListener() {
+
+	// Get the todo item ID.
+	var item = this.parentNode;
+	var id   = item.dataset.todoItemId;
+
+	// Generate an ojbect of attribute changes.
+	var changeObject = {
+		completed: this.checked
+	}
+
+	// Update the database and display.
+	updateTodoItem(id, changeObject);
+
+}
+
+function labelClickListener() {
+
+	// Get the parent, item DOM node.
+	var item = this.parentNode;
+
+	// Find the remove link, and remove it.
+	var remove = item.querySelector(".remove");
+	item.removeChild(remove);
+
+	// Create the edit div.
+	var edit = document.createElement("div");
+	edit.className = "edit";
+
+	// Create the input field.
+	var inputField   = document.createElement("input");
+	inputField.type  = "text";
+	inputField.value = this.innerHTML;
+
+	// Create the save button.
+	var saveButton = document.createElement("button");
+	saveButton.innerHTML = "Save";
+	saveButton.onclick   = saveClickListener;
+
+	// Create the cancel button.
+	var cancelButton = document.createElement("button");
+	cancelButton.innerHTML = "Cancel";
+	cancelButton.onclick   = cancelClickListener;
+
+	// Add the input field, save button, and cancel button to the edit div.
+	edit.appendChild(inputField);
+	edit.appendChild(saveButton);
+	edit.appendChild(cancelButton);
+
+	// Swap the label div tag (this) with an edit div tag.
+	item.replaceChild(edit, this);
+
+}
+
+function removeClickListener() {
+
+	// Get the parent, item DOM node.
+	var item = this.parentNode;
+
+	// Get the todo item ID.
+	var id   = item.dataset.todoItemId;
+
+	// Destroy the todo item.
+	destryTodoItem(id);
+
+}
+
+function saveClickListener() {
+
+	// Get the parent, edit div tag.
+	var edit = this.parentNode;
+
+	// Get the todo item ID.
+	var item = edit.parentNode;
+	var id   = item.dataset.todoItemId;
+
+	// Get the input tag.
+	var inputField = edit.querySelector("input");
+
+	// Generate an ojbect of attribute changes.
+	var changeObject = {
+		label: inputField.value
+	}
+
+	// Update the database and display.
+	updateTodoItem(id, changeObject);
+
+}
+
+function cancelClickListener() {
+
+	// Get the parent, edit div tag.
+	var edit = this.parentNode;
+
+	// Get the current todo item DOM node and original data.
+	var currentItem = edit.parentNode;
+	var currentData = JSON.parse(currentItem.dataset.todoItemData);
+
+	// Create a new item DOM node based on original data.
+	var newItem = createTodoItemDOM(currentData);
+
+	// Swap out the current item DOM node with the new item DOM node.
+	todoList.replaceChild(newItem, currentItem);
+
+}
+
+function updateTodoItem(id, changeObject) {
+
+	// Create a new XMLHttpRequest object.
+	var request = new XMLHttpRequest();
+
+	// Specify the HTTP method and url.
+	request.open("PUT", "/todo_items/" + id + ".json");
+
+	// Asssign listener when done.
+	request.onreadystatechange = function() {
+		if (request.readyState === 4) {
+
+			// Get the current DOM node of item.
+			var currentItem = todoList.querySelector("div[data-todo-item-id='" + id + "']");
+
+			// Create a new DOM node of item.
+			var itemData = JSON.parse(request.responseText);
+			var newItem  = createTodoItemDOM(itemData);
+
+			// Swap the current item DOM node with the new item DOM node.
+			todoList.replaceChild(newItem, currentItem);
+
+		}
+	}
+
+	// Make the data payload.
+	var payload = {
+		todo_item: changeObject
+	}
+
+	// Initiate the request, sending the payload.
+	request.setRequestHeader("Content-Type","application/json")
+	request.send(JSON.stringify(payload));
+
+}
+
+function destryTodoItem(id) {
+
+	// Create a new XMLHttpRequest object.
+	var request = new XMLHttpRequest();
+
+	// Specify the HTTP method and url.
+	request.open("DELETE", "/todo_items/" + id + ".json");
+
+	// Asssign listener when done.
+	request.onreadystatechange = function() {
+		if (request.readyState === 4) {
+
+			// Get the current DOM node of item.
+			var currentItem = todoList.querySelector("div[data-todo-item-id='" + id + "']");
+
+			// Remove the current item DOM node.
+			todoList.removeChild(currentItem);
+
+		}
+	}
+
+	// Initiate the request.
+	request.responseType = "text";
+	//request.setRequestHeader("Content-Type","application/json")
+	request.send();
+
+}
+
