@@ -339,9 +339,13 @@ function logRequest(httpMethod, url, body) {
 	// Create the log text (html).
 	logText =  "<p><span class='logHead'>Sending a request...</span></p>"
 	logText += "<p><span class='logLabel'>METHOD: </span> <span class='logValue logMethod'>" + httpMethod + "</span></p>";
-	logText += "<p><span class='logLabel'>URL:    </span> <span class='logValue'>" + url + "</span></p>";
-	logText += "<p><span class='logLabel'>DATA:   </span> <span class='logValue'>" + (body ? body : "(None)") + "</span></p>";
+	logText += "<p><span class='logLabel'>URL: </span> <span class='logValue'>" + url + "</span></p>";
 
+	// Log sent data if there was sent data.
+	if (body) {
+		logText += "<p><span class='logLabel'>DATA: </span> <span class='logValue'>" + body + "</span></p>";
+	}
+	
 	log.innerHTML = logText;
 
 	// Append the log to the request log output.
