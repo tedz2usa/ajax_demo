@@ -1,12 +1,23 @@
-<div id="main">
+<div id="wrapper">
 
-	<h1>Welcome to the Ajax Demo!</h1>
+	<div id="main">
 
-	<div id="newTodoItem">
-		<input type="text" id="newTodoInput">
-		<button type="button" id="newTodoCreate">Create</button>
+		<div id="viewAjax">
+			<input type="checkbox" id="toggleAjaxView">
+			<label for="toggleAjaxView">View Ajax Calls</label>
+		</div>
+
+		<h1>Welcome to the Ajax Demo!</h1>
+
+		<div id="newTodoItem">
+			<input type="text" id="newTodoInput" placeholder="Enter a New Todo Item">
+			<button type="button" id="newTodoCreate">Create</button>
+		</div>
+
+		<div id="todoItems"></div>
+
 	</div>
 
-	<div id="todoItems"></div>
+	<div id="requestLogOutput"></div>
 
 </div>

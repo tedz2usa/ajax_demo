@@ -3,17 +3,27 @@ body {
 	background-color: #def;
 }
 
+#wrapper {
+	text-align: center;
+}
+
 #main {
-	margin: 20px auto;
+	text-align: left;
 	padding: 20px;
-	width: 600px;
+	margin-top: 5px;
+	margin-bottom: 50px;
+	width: 500px;
 	border: 1px solid #aaa;
 	border-radius: 10px;
 	background-color: #fff;
+	display: inline-block;
+	vertical-align: top;
 }
 
 h1 {
-
+	clear: both;
+	margin-top: 40px;
+	margin-bottom: 30px;
 }
 
 #newTodoItem {
@@ -21,7 +31,7 @@ h1 {
 }
 
 #newTodoInput {
-	width: 500px;
+	width: 400px;
 	padding: 5px;
 }
 
@@ -54,6 +64,18 @@ h1 {
 
 .label {
 	font-size: 28px;
+	position: relative;
+	display: inline-block;
+}
+
+.strikethrough:before {
+	content: "";
+	position: absolute;
+	top: 50%;
+	left: 0;
+	right: 0;
+	height: 2px;
+	background: #000;
 }
 
 .label:hover {
@@ -67,4 +89,64 @@ h1 {
 	cursor: pointer;
 	display: none;
 	margin-left: 10px;
+}
+
+#viewAjax {
+	float: right;
+	margin-bottom: 10px;
+	font-size: 14px;
+}
+
+#viewAjax label {
+	position: relative;
+	top: -2px;
+}
+
+#requestLogOutput {
+	text-align: left;
+	margin-top: 10px;
+	width: 200px;
+	word-wrap: break-word;
+	display: inline-block;
+	vertical-align: top;
+	display: none;
+}
+
+.log {
+	margin: 10px;
+	margin-top: 5px;
+	margin-bottom: 10px;
+	border: 1px solid #aaa;
+	border-radius: 5px;
+	padding: 8px;
+	background-color: #fff;
+}
+
+.log p {
+	margin: 0;
+}
+
+.logHead {
+	display: block;
+	font-size: 13px;
+}
+
+.logLabel {
+	font-weight: bold;
+	color: #35a;
+	display: block;
+	font-size: 11px;
+	margin-top: 5px;
+	letter-spacing: 1px;
+}
+
+.logValue {
+	font-weight: bold;
+	font-size: 14px;
+	display: block;
+	margin-bottom: 8px;
+}
+
+.logMethod {
+	font-size: 20px;
 }

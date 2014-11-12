@@ -1,13 +1,28 @@
-var todoList, newTodoInput, newTodoCreate;
+var todoList, newTodoInput, newTodoCreate, requestLogOutput;
 
 window.onload = function() {
+
+	/*  Setup Ajax Request Logging.  */
+
+	// Get the request log div and view Ajax calls checkbox.
+	requestLogOutput = document.getElementById("requestLogOutput");
+	toggleAjaxView = document.getElementById("toggleAjaxView");
+	toggleAjaxView.checked = false;
+
+	// Set the button click listener for view Ajax calls checkbox.
+	toggleAjaxView.onclick = function() {
+		requestLogOutput.style.display = this.checked ? "inline-block" : "none";
+	}
+
+
+	/*  Setup the Todo List.  */
+
+	// Get the todo list div.
+	todoList = document.getElementById("todoItems");
 
 	// Get new todo item input field and create button.
 	newTodoInput  = document.getElementById("newTodoInput");
 	newTodoCreate = document.getElementById("newTodoCreate");
-
-	// Get the todo list div.
-	todoList = document.getElementById("todoItems");
 
 	// Set button click listener to create button.
 	newTodoCreate.onclick = createTodoItem;
@@ -16,6 +31,7 @@ window.onload = function() {
 	updateTodoList();
 
 }
+
 
 
 
@@ -47,6 +63,9 @@ function createTodoItem() {
 	request.setRequestHeader("Content-Type","application/json")
 	request.send(JSON.stringify(payload));
 
+	// Log this request.
+	logRequest("POST", "/todo_items", JSON.stringify(payload));
+
 }
 
 function updateTodoList() {
@@ -65,8 +84,11 @@ function updateTodoList() {
 		}
 	}
 
-	// Initiate the request, sending the payload.
+	// Initiate the request.
 	request.send();
+
+	// Log this request.
+	logRequest("GET", "/todo_items.json");
 
 }
 
@@ -108,6 +130,11 @@ function createTodoItemDOM(todoItemData) {
 	var label = document.createElement("p");
 	label.className = "label";
 	label.innerHTML = todoItemData.label;
+
+	// Add a strikethrough class if the todo item is completed.
+	if (todoItemData.completed) {
+		label.className += " strikethrough";
+	}
 
 	// Create the remove button.
 	var remove = document.createElement("span");
@@ -268,6 +295,9 @@ function updateTodoItem(id, changeObject) {
 	request.setRequestHeader("Content-Type","application/json")
 	request.send(JSON.stringify(payload));
 
+	// Log this request.
+	logRequest("PUT", "/todo_items/" + id + ".json", JSON.stringify(payload));
+
 }
 
 function destryTodoItem(id) {
@@ -293,8 +323,28 @@ function destryTodoItem(id) {
 
 	// Initiate the request.
 	request.responseType = "text";
-	//request.setRequestHeader("Content-Type","application/json")
 	request.send();
+
+	// Log this request.
+	logRequest("DELETE", "/todo_items/" + id + ".json");
 
 }
 
+function logRequest(httpMethod, url, body) {
+
+	// Create a new request logging.
+	var log = document.createElement("div");
+	log.className = "log";
+
+	// Create the log text (html).
+	logText =  "<p><span class='logHead'>Sending a request...</span></p>"
+	logText += "<p><span class='logLabel'>METHOD: </span> <span class='logValue logMethod'>" + httpMethod + "</span></p>";
+	logText += "<p><span class='logLabel'>URL:    </span> <span class='logValue'>" + url + "</span></p>";
+	logText += "<p><span class='logLabel'>DATA:   </span> <span class='logValue'>" + (body ? body : "(None)") + "</span></p>";
+
+	log.innerHTML = logText;
+
+	// Append the log to the request log output.
+	requestLogOutput.appendChild(log);
+
+}
