@@ -8,9 +8,9 @@ To run:
 
 1. Download this project onto your computer.
 2. In the terminal, navigate to this project directory.
-3. Run the command: bundle install
-4. Run the command: rake db:migrate
-5. Run the command: rails s
+3. Run the command: __bundle install__
+4. Run the command: __rake db:migrate__
+5. Run the command: __rails s__
 6. Navigate your web browser to: localhost:3000
 
 Directions:
